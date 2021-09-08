@@ -5,54 +5,90 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = ({navigation}) => {
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const passwordRef = React.createRef();
 
-  const [data, setData] = React.useState({
-    
-    check_textInputChange: false,
-    
-});
+  const getData = async () => {
+    try {
+      const userDataJSON = await AsyncStorage.getItem('@RegisterUser');
+      if (userDataJSON) {
+        const userData = JSON.parse(userDataJSON);
 
-  const textInputChange = (val) => {
-    if( val.trim().length >= 4 ) {
-        setData({
-            ...data,
-            username: val,
-            check_textInputChange: true,
-            isValidUser: true
-        });
-    } else {
-        setData({
-            ...data,
-            username: val,
-            check_textInputChange: false,
-            isValidUser: false
-        });
+        return userData;
+      }
+    } catch (err) {
+      console.log('error getting loggedin user', err);
     }
-}
-const loginHandle =(username, password)=>{
-  signIn(username,password);
-}
+  };
+
+  const signIn = async () => {
+    const userData = await getData();
+    if (!username) {
+      Alert.alert('Please enter email/mobile');
+      return;
+    }
+    if (!password) {
+      Alert.alert('Please enter password');
+      return;
+    }
+
+    console.log(userData.mobile, userData.email, userData.password);
+    if (!userData) {
+      Alert.alert('Invalid Input!');
+    } else if (username === userData.mobile || username === userData.email) {
+      if (password === userData.password) {
+        navigation.navigate('Dashboard');
+      } else if (password !== userData.password) {
+        Alert.alert('Incorrect Password!');
+      }
+    } else {
+      Alert.alert('Incorrect Email/Mobile or User is not registred!', '', [
+        {text: 'Cancel'},
+        {
+          text: 'Register',
+          onPress: () => {
+            navigation.navigate('Register');
+          },
+        },
+      ]);
+    }
+  };
 
   return (
     <View style={styles.Container}>
+      <Text
+        style={[
+          styles.text,
+          {
+            alignSelf: 'center',
+            paddingBottom: 40,
+            fontSize: 35,
+            fontWeight: 'bold',
+          },
+        ]}>
+        Sign In
+      </Text>
       <View>
-        <Text style={styles.text}>Username</Text>
+        <Text style={styles.text}>Email/Mobile</Text>
         <View style={styles.Placeholder}>
           <TextInput
             placeholder="Enter Username"
             placeholderTextColor="#666666"
             style={styles.textInput}
             autoCapitalize="none"
-            onChangeText={(val) => textInputChange(val)}
+            onChangeText={username => setUsername(username)}
+            onSubmitEditing={() => {
+              passwordRef.current?.focus();
+            }}
+            blurOnSubmit={false}
           />
-          
         </View>
-        {data.check_textInputChange ? 
-                <Text> Accepted </Text>
-                : <Text>Min 4 charactors</Text>}
       </View>
       <View>
         <Text style={styles.text}>Password</Text>
@@ -60,16 +96,20 @@ const loginHandle =(username, password)=>{
           <TextInput
             placeholder="Enter Password"
             placeholderTextColor="#666666"
-            
+            ref={passwordRef}
             secureTextEntry={true}
             style={styles.textInput}
+            onChangeText={password => setPassword(password)}
           />
         </View>
       </View>
-      <TouchableOpacity 
-      onPress={() => navigation.navigate('UserInfo Screen')}  
-      style={styles.signIn}>
+      <TouchableOpacity onPress={() => signIn()} style={styles.signIn}>
         <Text style={styles.textSign}> Sign In </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Register')}
+        style={styles.Register}>
+        <Text style={styles.textSign}> Don't have account? Register </Text>
       </TouchableOpacity>
     </View>
   );
@@ -101,6 +141,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'gold',
     marginTop: 40,
   },
+  Register: {
+    marginTop: 40,
+  },
   textSign: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -109,7 +152,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     marginBottom: 7,
-    color: 'gray',
+    color: 'black',
     marginTop: 35,
   },
   Placeholder: {
