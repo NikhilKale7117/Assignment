@@ -5,6 +5,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Register from './Screens/Register';
 import LogIn from './Screens/Login';
 import Dashboard from './Screens/Dashboard';
+import Profile from './Screens/Profile';
+import ImageSelect from './Screens/ImageSelect';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +25,12 @@ function App() {
           title: 'Dashboard',
           headerTitleAlign: 'center',
           headerBackVisible:false,
+        }}/>
+        <Stack.Screen name="Profile" component={Profile} options={{
+          headerTitleAlign:"center",
+        }}/>
+        <Stack.Screen name="ImageSelect" component={ImageSelect} options={{
+          headerTitleAlign:"center",
         }}/>
       </Stack.Navigator>
     </NavigationContainer>

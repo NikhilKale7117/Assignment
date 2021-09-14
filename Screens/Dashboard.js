@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,6 +10,8 @@ import Feather from 'react-native-vector-icons/Feather';
 import Pie from 'react-native-pie';
 
 const Dashboard = ({navigation}) => {
+  
+
   return (
     <View style={styles.Container}>
       <TouchableOpacity style={{alignSelf: 'flex-end'}}>
@@ -78,13 +80,17 @@ const Dashboard = ({navigation}) => {
         <Text> Total Score</Text>
       </View>
       <TouchableOpacity
-        onPress={() => navigation.navigate('LogIn')}
+        onPress={() => navigation.navigate('Profile')}
         style={styles.signIn}>
-        <Text style={styles.textSign}> Logout </Text>
+        <Text style={styles.textSign}> Go to Profile </Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => signIn()} style={styles.signIn}>
+        <Text style={styles.textSign}>hello</Text>
+      </TouchableOpacity>
+      <Text>My Name is ...........</Text>
     </View>
   );
-};
+        };
 
 export default Dashboard;
 

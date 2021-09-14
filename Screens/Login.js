@@ -19,7 +19,6 @@ const Login = ({navigation}) => {
       const userDataJSON = await AsyncStorage.getItem('@RegisterUser');
       if (userDataJSON) {
         const userData = JSON.parse(userDataJSON);
-
         return userData;
       }
     } catch (err) {
@@ -43,7 +42,7 @@ const Login = ({navigation}) => {
       Alert.alert('Invalid Input!');
     } else if (username === userData.mobile || username === userData.email) {
       if (password === userData.password) {
-        navigation.navigate('Dashboard');
+        navigation.navigate('Profile');
       } else if (password !== userData.password) {
         Alert.alert('Incorrect Password!');
       }
